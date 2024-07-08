@@ -1,18 +1,26 @@
 {
   "name": "bitvora",
   "version": "0.0.1",
-  "description": "",
+  "description": "A Node.js SDK for receiving and validating Bitvora webhooks.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Bitvora",
+  "license": "MIT",
   "dependencies": {
     "crypto": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitvora/bitvora-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bitvora/bitvora-ts/issues"
+  },
+  "homepage": "https://github.com/bitvora/bitvora-ts#readme"
 }
