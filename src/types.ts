@@ -11,12 +11,26 @@ export interface DepositChainConfirmedPayload {
   metadata: Metadata;
 }
 
-export interface WebhookPayloads {
-  deposit_chain_confirmed: DepositChainConfirmedPayload;
-  // Add other event types here
+// Define other event payload types here
+export interface AnotherEventPayload {
+  // Define the payload structure
 }
 
-export interface WebhookEvent<T> {
-  event_type: keyof WebhookPayloads;
-  data: T;
+export interface WebhookPayloads {
+  deposit_chain_confirmed: DepositChainConfirmedPayload;
+  another_event: AnotherEventPayload;
 }
+
+export interface DepositChainConfirmedEvent {
+  event_type: "deposit_chain_confirmed";
+  data: DepositChainConfirmedPayload;
+}
+
+export interface AnotherEvent {
+  event_type: "another_event";
+  data: AnotherEventPayload;
+}
+
+// Define other event types here
+
+export type WebhookEvent = DepositChainConfirmedEvent | AnotherEvent;

@@ -1,5 +1,5 @@
 import { createHmac } from "crypto";
-import { WebhookEvent, WebhookPayloads } from "./types";
+import { WebhookEvent } from "./types";
 
 export class Webhook {
   constructor(private clientSecret: string) {}
@@ -11,14 +11,8 @@ export class Webhook {
     return hash === signature;
   }
 
-  public processWebhook<T extends keyof WebhookPayloads>(
-    event: WebhookEvent<WebhookPayloads[T]>,
-    signature: string
-  ): WebhookPayloads[T] | null {
+  public processWebhook(event: WebhookEvent, signature: string): boolean {
     const payloadString = JSON.stringify(event);
-    if (this.validateSignature(payloadString, signature)) {
-      return event.data;
-    }
-    return null;
+    return this.validateSignature(payloadString, signature);
   }
 }

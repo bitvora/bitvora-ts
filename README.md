@@ -8,36 +8,138 @@ A Node.js SDK for receiving and validating Bitvora webhooks.
 npm install bitvora
 ```
 
-```typescript
-import { Webhook, WebhookEvent, WebhookPayloads } from 'bitvora';
+## Express Example
 
-const clientSecret = 'your_client_secret';
+```typescript
+import express, { Request, Response } from "express";
+import bodyParser from "body-parser";
+import {
+  Webhook,
+  WebhookEvent,
+  DepositChainConfirmedPayload,
+  AnotherEventPayload,
+} from "./types";
+
+const app = express();
+const port = 3000;
+
+const clientSecret = "your_client_secret"; // Replace with your actual client secret
 const webhook = new Webhook(clientSecret);
 
-// Example webhook payload
-const event: WebhookEvent<WebhookPayloads['deposit_chain_confirmed']> = {
-    event_type: 'deposit_chain_confirmed',
-    data: {
-        deposit_id: 'd1b1b1b1-1b1b-1b1b-1b1b-1b1b1b1b1b1b',
-        chain_txid: 'n7092873405v9273v4095n7v02934nv752v3n4v5n7v',
-        chain_deposit_address: 'bcq1asdfn0a7s9dfas9dfn9as7',
-        amount_sats: 100000,
-        fee: 1000,
-        metadata: {
-            key1: 'value1',
-            key2': 'value2'
-        }
+app.use(bodyParser.json());
+
+app.post("/bitvora_webhook", (req: Request, res: Response) => {
+  const signature = req.headers["bitvora-hash"] as string;
+  const body = req.body as WebhookEvent;
+
+  if (!signature || !body) {
+    return res.status(400).json({ error: "Invalid request" });
+  }
+
+  const payload = JSON.stringify(body);
+  const isValid = webhook.validateSignature(payload, signature);
+
+  if (!isValid) {
+    return res.status(403).json({ error: "Invalid signature" });
+  }
+
+  // Use TypeScript's type narrowing
+  switch (body.event_type) {
+    case "deposit_chain_confirmed":
+      handleDepositChainConfirmed(body.data);
+      break;
+    case "another_event":
+      handleAnotherEvent(body.data);
+      break;
+    // Add cases for other event types
+    default:
+      return res.status(400).json({ error: "Unhandled event type" });
+  }
+
+  return res.status(200).json({ status: "success" });
+});
+
+function handleDepositChainConfirmed(data: DepositChainConfirmedPayload) {
+  // Handle deposit_chain_confirmed event
+  console.log("Deposit confirmed:", data);
+}
+
+function handleAnotherEvent(data: AnotherEventPayload) {
+  // Handle another_event
+  console.log("Another event:", data);
+}
+
+// Add other event handlers here
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+```
+
+## NestJS Example
+
+```typescript
+import {
+  Controller,
+  Post,
+  Headers,
+  Body,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
+import {
+  Webhook,
+  WebhookEvent,
+  DepositChainConfirmedPayload,
+  AnotherEventPayload,
+} from "bitvora"; // Adjust the import according to your SDK setup
+
+@Controller("bitvora_webhook")
+export class BitvoraController {
+  private readonly clientSecret = "your_client_secret"; // Replace with your actual client secret
+  private readonly webhook: Webhook;
+
+  constructor() {
+    this.webhook = new Webhook(this.clientSecret);
+  }
+
+  @Post()
+  handleWebhook(
+    @Headers("bitvora-hash") signature: string,
+    @Body() body: WebhookEvent
+  ): any {
+    const payload = JSON.stringify(body);
+    const isValid = this.webhook.validateSignature(payload, signature);
+
+    if (!isValid) {
+      throw new HttpException("Invalid signature", HttpStatus.FORBIDDEN);
     }
-};
 
-// Example header
-const signature = 'sha256/hmac hash of payload with client secret';
+    switch (body.event_type) {
+      case "deposit_chain_confirmed":
+        this.handleDepositChainConfirmed(body.data);
+        break;
+      case "another_event":
+        this.handleAnotherEvent(body.data);
+        break;
+      // Add cases for other event types
+      default:
+        throw new HttpException("Unhandled event type", HttpStatus.BAD_REQUEST);
+    }
 
-const result = webhook.processWebhook(event, signature);
+    return { status: "success" };
+  }
 
-if (result) {
-    console.log('Webhook is valid:', result);
-} else {
-    console.log('Invalid webhook signature');
+  private handleDepositChainConfirmed(data: DepositChainConfirmedPayload) {
+    // Handle deposit_chain_confirmed event
+    console.log("Deposit confirmed:", data);
+  }
+
+  private handleAnotherEvent(data: AnotherEventPayload) {
+    // Handle another_event
+    console.log("Another event:", data);
+  }
+
+  // Add other event handlers here
 }
 ```
