@@ -1,6 +1,6 @@
 # Bitvora SDK
 
-A Node.js SDK for receiving and validating Bitvora webhooks.
+A Node.js SDK written in Typescript for the Bitvora API and Webhooks.
 
 ## Installation
 
