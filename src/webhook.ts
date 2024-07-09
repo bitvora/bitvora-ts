@@ -1,5 +1,5 @@
-import { createHmac } from "crypto";
 import { WebhookEvent } from "./types";
+const { createHmac } = require("node:crypto");
 
 export class Webhook {
   constructor(private clientSecret: string) {}
