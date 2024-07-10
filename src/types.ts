@@ -106,3 +106,24 @@ export type WebhookEvent =
   | WithdrawalChainCompletedEvent
   | WithdrawalLightningPendingEvent
   | WithdrawalLightningCompletedEvent;
+
+export interface BitcoinWithdrawalResponse {
+  status: number;
+  message: string;
+  data: BitcoinWithdrawal;
+}
+
+export interface BitcoinWithdrawal {
+  id: string;
+  company_id: string;
+  ledger_tx_id: string;
+  amount_sats: number;
+  recipient: string;
+  network_type: string;
+  rail_type: string;
+  status: string;
+  lightning_payment: null;
+  chain_tx_id: null;
+  created_at: string;
+  updated_at: string;
+}

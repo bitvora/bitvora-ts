@@ -1,4 +1,5 @@
 import { createHmac } from "node:crypto";
+import { BitcoinWithdrawalResponse } from "./types";
 
 export class BitvoraClient {
   constructor(private apiKey: string, private network: string) {
@@ -45,5 +46,39 @@ export class BitvoraClient {
     hmac.update(payload);
     const hash = hmac.digest("hex");
     return hash === signature;
+  }
+
+  public async sendBitcoin(
+    destination: string,
+    amount_sats: number
+  ): Promise<BitcoinWithdrawalResponse> {
+    let response = await fetch(`${this.getHost()}/v1/bitcoin/send/confirm`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+      body: JSON.stringify({
+        destination: destination,
+        amount_sats: amount_sats,
+      }),
+    });
+
+    return await response.json();
+  }
+
+  public async getWithdrawal(withdrawalId: string): Promise<any> {
+    let response = await fetch(
+      `${this.getHost()}/v1/bitcoin/withdrawals/${withdrawalId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      }
+    );
+
+    return await response.json();
   }
 }
