@@ -1,5 +1,12 @@
 import { createHmac } from "node:crypto";
-import { BitcoinWithdrawalResponse } from "./types";
+import {
+  BitcoinDepositResponse,
+  BitcoinWithdrawalResponse,
+  CreateLightningAddressResponse,
+  CreateLightningInvoiceResponse,
+  Metadata,
+} from "./types";
+import { Withdrawal } from "./withdrawal";
 
 export class BitvoraClient {
   constructor(private apiKey: string, private network: string) {
@@ -48,28 +55,34 @@ export class BitvoraClient {
     return hash === signature;
   }
 
-  public async sendBitcoin(
+  public async withdraw(
     destination: string,
     amount_sats: number
-  ): Promise<BitcoinWithdrawalResponse> {
-    let response = await fetch(`${this.getHost()}/v1/bitcoin/send/confirm`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiKey}`,
-      },
-      body: JSON.stringify({
-        destination: destination,
-        amount_sats: amount_sats,
-      }),
-    });
+  ): Promise<Withdrawal> {
+    const response = await fetch(
+      `${this.getHost()}/v1/bitcoin/withdraw/confirm`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          destination: destination,
+          amount_sats: amount_sats,
+        }),
+      }
+    );
 
-    return await response.json();
+    const data = await response.json();
+    return new Withdrawal(this, data);
   }
 
-  public async getWithdrawal(withdrawalId: string): Promise<any> {
-    let response = await fetch(
-      `${this.getHost()}/v1/bitcoin/withdrawals/${withdrawalId}`,
+  public async getWithdrawal(
+    withdrawalId: string
+  ): Promise<BitcoinWithdrawalResponse> {
+    const response = await fetch(
+      `${this.getHost()}/v1/transactions/withdrawals/${withdrawalId}`,
       {
         method: "GET",
         headers: {
@@ -80,5 +93,105 @@ export class BitvoraClient {
     );
 
     return await response.json();
+  }
+
+  public async getDeposit(depositId: string): Promise<BitcoinDepositResponse> {
+    const response = await fetch(
+      `${this.getHost()}/v1/transactions/deposits/${depositId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      }
+    );
+
+    return await response.json();
+  }
+
+  public async createLightningAddress(
+    metadata: Metadata | null
+  ): Promise<CreateLightningAddressResponse> {
+    const response = await fetch(
+      `${this.getHost()}/v1/bitcoin/deposit/lightning-address`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          handle: null,
+          domain: null,
+          metadata: metadata,
+        }),
+      }
+    );
+
+    return await response.json();
+  }
+
+  public async createCustomLightningAddress(
+    handle: string,
+    domain: string,
+    metadata: Metadata | null
+  ): Promise<any> {
+    const response = await fetch(
+      `${this.getHost()}/v1/bitcoin/deposit/lightning-address`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          handle: handle,
+          domain: domain,
+          metadata: metadata,
+        }),
+      }
+    );
+
+    return await response.json();
+  }
+
+  public async createLightningInvoice(
+    amountSats: number,
+    memo: string,
+    expirySeconds: number,
+    metadata: Metadata | null
+  ): Promise<CreateLightningInvoiceResponse> {
+    const response = await fetch(
+      `${this.getHost()}/v1/bitcoin/deposit/lightning-invoice`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          amount_sats: amountSats,
+          description: memo,
+          expiry_seconds: expirySeconds,
+          metadata: metadata,
+        }),
+      }
+    );
+
+    return await response.json();
+  }
+
+  public async getBalance(): Promise<number> {
+    const response = await fetch(`${this.getHost()}/v1/transactions/balance`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+    });
+
+    const data = await response.json();
+    return data.data.balance;
   }
 }
