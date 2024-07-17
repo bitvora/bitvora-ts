@@ -79,7 +79,7 @@ import { BitvoraClient } from "bitvora";
 
 const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
-async function getBalance(): Promise<Balance> {
+async function getBalance(): Promise<number> {
   return bitvora.getBalance();
 }
 ```
@@ -91,7 +91,7 @@ import { BitvoraClient } from "bitvora";
 
 const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
-async function getTransactions(): Promise<Transaction[]> {
+async function getTransactions(): Promise<GetTransactionsResponse> {
   return bitvora.getTransactions();
 }
 ```
@@ -103,7 +103,7 @@ import { BitvoraClient } from "bitvora";
 
 const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
-async function getDeposit(): Promise<Deposit> {
+async function getDeposit(): Promise<BitcoinDepositResponse> {
   return bitvora.getDeposit("UUID-HERE");
 }
 ```
@@ -115,7 +115,7 @@ import { BitvoraClient } from "bitvora";
 
 const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
-async function getWithdrawal(): Promise<Withdrawal> {
+async function getWithdrawal(): Promise<BitcoinWithdrawalResponse> {
   return bitvora.getWithdrawal("UUID-HERE");
 }
 ```
