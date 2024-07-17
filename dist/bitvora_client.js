@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BitvoraClient = void 0;
 const node_crypto_1 = require("node:crypto");
 const withdrawal_1 = require("./withdrawal");
+const lightning_invoice_1 = require("./lightning_invoice");
 class BitvoraClient {
     constructor(apiKey, network) {
         this.apiKey = apiKey;
@@ -34,7 +35,7 @@ class BitvoraClient {
     getHost() {
         switch (this.network) {
             case "mainnet":
-                return "https://api.bitvora.com";
+                return "http://localhost:4000";
             case "testnet":
                 return "https://api.testnet.bitvora.com";
             case "signet":
@@ -139,6 +140,18 @@ class BitvoraClient {
                     metadata: metadata,
                 }),
             });
+            return new lightning_invoice_1.LightningInvoice(this, yield response.json());
+        });
+    }
+    getLightningInvoice(invoiceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield fetch(`${this.getHost()}/v1/bitcoin/deposit/lightning-invoice/id/${invoiceId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.apiKey}`,
+                },
+            });
             return yield response.json();
         });
     }
@@ -153,6 +166,18 @@ class BitvoraClient {
             });
             const data = yield response.json();
             return data.data.balance;
+        });
+    }
+    getTransactions() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield fetch(`${this.getHost()}/v1/transactions`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.apiKey}`,
+                },
+            });
+            return yield response.json();
         });
     }
 }

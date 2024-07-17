@@ -1,5 +1,6 @@
-import { BitcoinDepositResponse, BitcoinWithdrawalResponse, CreateLightningAddressResponse, CreateLightningInvoiceResponse, Metadata } from "./types";
+import { BitcoinDepositResponse, BitcoinWithdrawalResponse, CreateLightningAddressResponse, CreateLightningInvoiceResponse, GetTransactionsResponse, Metadata } from "./types";
 import { Withdrawal } from "./withdrawal";
+import { LightningInvoice } from "./lightning_invoice";
 export declare class BitvoraClient {
     private apiKey;
     private network;
@@ -14,7 +15,9 @@ export declare class BitvoraClient {
     getDeposit(depositId: string): Promise<BitcoinDepositResponse>;
     createLightningAddress(metadata: Metadata | null): Promise<CreateLightningAddressResponse>;
     createCustomLightningAddress(handle: string, domain: string, metadata: Metadata | null): Promise<any>;
-    createLightningInvoice(amountSats: number, memo: string, expirySeconds: number, metadata: Metadata | null): Promise<CreateLightningInvoiceResponse>;
+    createLightningInvoice(amountSats: number, memo: string, expirySeconds: number, metadata: Metadata | null): Promise<LightningInvoice>;
+    getLightningInvoice(invoiceId: string): Promise<CreateLightningInvoiceResponse>;
     getBalance(): Promise<number>;
+    getTransactions(): Promise<GetTransactionsResponse>;
 }
 //# sourceMappingURL=bitvora_client.d.ts.map
