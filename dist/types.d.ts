@@ -86,4 +86,103 @@ export interface WithdrawalLightningCompletedEvent {
     data: WithdrawalLightningPayload;
 }
 export type WebhookEvent = DepositOnChainCompletedEvent | DepositOnChainPendingEvent | DepositLightningCompletedEvent | WithdrawalChainPendingEvent | WithdrawalChainCompletedEvent | WithdrawalLightningPendingEvent | WithdrawalLightningCompletedEvent;
+export interface BitcoinWithdrawalResponse {
+    status: number;
+    message: string;
+    data: BitcoinWithdrawal;
+}
+export interface BitcoinWithdrawal {
+    id: string;
+    company_id: string;
+    ledger_tx_id: string;
+    amount_sats: number;
+    recipient: string;
+    network_type: string;
+    rail_type: string;
+    status: string;
+    lightning_payment: LightningPayment | null;
+    metadata: string | null;
+    chain_tx_id: null;
+    created_at: string;
+    updated_at: string;
+}
+export interface LightningAddress {
+    id: string;
+    company_id: string;
+    handle: string | null;
+    domain: string | null;
+    address: string;
+    metadata: Metadata;
+    created_at: string;
+    updated_at: string;
+    last_used_at: string | null;
+    deleted_at: string | null;
+}
+export interface CreateLightningAddressResponse {
+    status: number;
+    message: string;
+    data: LightningAddress;
+}
+export interface LightningInvoice {
+    id: string;
+    company_id: string;
+    node_id: string;
+    memo: string;
+    r_preimage: string;
+    r_hash: string;
+    value: number;
+    settled: boolean;
+    creation_date: string;
+    settle_date: string;
+    payment_request: string;
+    description_hash: string;
+    expiry: string;
+    state: string;
+    metadata: Metadata;
+    lightning_address_id: string | null;
+}
+export interface CreateLightningInvoiceResponse {
+    status: number;
+    message: string;
+    data: LightningInvoice;
+}
+export interface BitcoinDeposit {
+    id: string;
+    company_id: string;
+    ledger_tx_id: string;
+    recipient: string;
+    amount_sats: number;
+    network_type: string;
+    rail_type: string;
+    status: string;
+    chain_tx_id: string | null;
+    lightning_invoice_id: string | null;
+    created_at: string;
+    updated_at: string;
+}
+export interface BitcoinDepositResponse {
+    status: number;
+    message: string;
+    data: BitcoinDeposit;
+}
+export interface LightningPayment {
+    node_id: string;
+    response: {
+        payment_error: string;
+        payment_preimage: string;
+        payment_route: {
+            total_time_lock: number;
+            total_fees: string;
+            total_amt: string;
+            hops: {
+                chan_id: string;
+                chan_capacity: string;
+                amt_to_forward: string;
+                expiry: number;
+                amt_to: string;
+            }[];
+        };
+        payment_hash: string;
+    };
+}
 //# sourceMappingURL=types.d.ts.map

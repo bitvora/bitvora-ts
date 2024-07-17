@@ -8,138 +8,134 @@ A Node.js SDK written in Typescript for the Bitvora API and Webhooks.
 npm install bitvora
 ```
 
-## Express Example
+## Usage
+
+### Sending Bitcoin (withdrawal)
 
 ```typescript
-import express, { Request, Response } from "express";
-import bodyParser from "body-parser";
-import {
-  Webhook,
-  WebhookEvent,
-  DepositChainConfirmedPayload,
-  AnotherEventPayload,
-} from "./types";
+import { Bitvora } from 'bitvora';
 
-const app = express();
-const port = 3000;
-
-const clientSecret = "your_client_secret"; // Replace with your actual client secret
-const webhook = new Webhook(clientSecret);
-
-app.use(bodyParser.json());
-
-app.post("/bitvora_webhook", (req: Request, res: Response) => {
-  const signature = req.headers["bitvora-hash"] as string;
-  const body = req.body as WebhookEvent;
-
-  if (!signature || !body) {
-    return res.status(400).json({ error: "Invalid request" });
-  }
-
-  const payload = JSON.stringify(body);
-  const isValid = webhook.validateSignature(payload, signature);
-
-  if (!isValid) {
-    return res.status(403).json({ error: "Invalid signature" });
-  }
-
-  // Use TypeScript's type narrowing
-  switch (body.event_type) {
-    case "deposit_chain_confirmed":
-      handleDepositChainConfirmed(body.data);
-      break;
-    case "another_event":
-      handleAnotherEvent(body.data);
-      break;
-    // Add cases for other event types
-    default:
-      return res.status(400).json({ error: "Unhandled event type" });
-  }
-
-  return res.status(200).json({ status: "success" });
+const bitvora = new Bitvora({
+  apiKey,
+  "mainnet" // ["mainnet", "testnet", "signet"]
 });
 
-function handleDepositChainConfirmed(data: DepositChainConfirmedPayload) {
-  // Handle deposit_chain_confirmed event
-  console.log("Deposit confirmed:", data);
+async function sendBitcoin(): Promise<Withdrawal> {
+  const withdrawal = await bitvora.withdraw(
+    "utxo1@getalby.com", // accepts on-chain, lightning invoice (payment request), lightning address, lnurl
+     25 // amount, in sats
+    ); // return a withdrawal object
+  await withdrawal.isSettled(); // wait until the payment succeeds or fails, optional
+
+  return withdrawal;
 }
-
-function handleAnotherEvent(data: AnotherEventPayload) {
-  // Handle another_event
-  console.log("Another event:", data);
-}
-
-// Add other event handlers here
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
 ```
 
-## NestJS Example
+### Creating a Lightning Address
 
 ```typescript
-import {
-  Controller,
-  Post,
-  Headers,
-  Body,
-  HttpException,
-  HttpStatus,
-} from "@nestjs/common";
-import {
-  Webhook,
-  WebhookEvent,
-  DepositChainConfirmedPayload,
-  AnotherEventPayload,
-} from "bitvora"; // Adjust the import according to your SDK setup
+import { Bitvora } from 'bitvora';
 
-@Controller("bitvora_webhook")
-export class BitvoraController {
-  private readonly clientSecret = "your_client_secret"; // Replace with your actual client secret
-  private readonly webhook: Webhook;
+const bitvora = new Bitvora({
+  apiKey,
+  "mainnet" // ["mainnet", "testnet", "signet"]
+});
 
-  constructor() {
-    this.webhook = new Webhook(this.clientSecret);
-  }
+async function createLightningAddress(): Promise<CreateLightningAddressResponse> {
+  let metadata = {
+    userID: "your-internal-user-id",
+    email: "useremail@protonmail.com",
+  }; // optional metadata object to attach, accepts any valid key-value object
 
-  @Post()
-  handleWebhook(
-    @Headers("bitvora-hash") signature: string,
-    @Body() body: WebhookEvent
-  ): any {
-    const payload = JSON.stringify(body);
-    const isValid = this.webhook.validateSignature(payload, signature);
+  return bitvora.createLightningAddress(metadata); // also accepts null
+}
+```
 
-    if (!isValid) {
-      throw new HttpException("Invalid signature", HttpStatus.FORBIDDEN);
-    }
+### Create a Lightning Invoice
 
-    switch (body.event_type) {
-      case "deposit_chain_confirmed":
-        this.handleDepositChainConfirmed(body.data);
-        break;
-      case "another_event":
-        this.handleAnotherEvent(body.data);
-        break;
-      // Add cases for other event types
-      default:
-        throw new HttpException("Unhandled event type", HttpStatus.BAD_REQUEST);
-    }
+```typescript
+import { Bitvora } from 'bitvora';
 
-    return { status: "success" };
-  }
+const bitvora = new Bitvora({
+  apiKey,
+  "mainnet" // ["mainnet", "testnet", "signet"]
+});
 
-  private handleDepositChainConfirmed(data: DepositChainConfirmedPayload) {
-    // Handle deposit_chain_confirmed event
-    console.log("Deposit confirmed:", data);
-  }
+async function createLightningInvoice(): Promise<LightningInvoice> {
+  let metadata = {
+    userID: "your-internal-user-id",
+    email: "useremail@protonmail.com",
+  }; // optional metadata object to attach, accepts any valid key-value object
 
-  private handleAnotherEvent(data: AnotherEventPayload) {
-    // Handle another_event
-    console.log("Another event:", data);
-  }
+  const invoice = await bitvora.createLightningInvoice(
+    50,
+    "this is from the sdk",
+    3600,
+    metadata
+  );
 
-  // Add other event handlers here
+  await invoice.isSettled();
+
+  return invoice;
+}
+```
+
+### Get Balance
+
+```typescript
+import { Bitvora } from 'bitvora';
+
+const bitvora = new Bitvora({
+  apiKey,
+  "mainnet" // ["mainnet", "testnet", "signet"]
+});
+
+async function getBalance(): Promise<Balance> {
+  return bitvora.getBalance();
+}
+```
+
+### Get Transactions
+
+```typescript
+import { Bitvora } from 'bitvora';
+
+const bitvora = new Bitvora({
+  apiKey,
+  "mainnet" // ["mainnet", "testnet", "signet"]
+});
+
+async function getTransactions(): Promise<Transaction[]> {
+  return bitvora.getTransactions();
+}
+```
+
+### Get Deposit
+
+```typescript
+import { Bitvora } from 'bitvora';
+
+const bitvora = new Bitvora({
+  apiKey,
+  "mainnet" // ["mainnet", "testnet", "signet"]
+});
+
+async function getDeposit(): Promise<Deposit> {
+  return bitvora.getDeposit("UUID-HERE");
+}
+```
+
+### Get Withdrawal
+
+```typescript
+import { Bitvora } from 'bitvora';
+
+const bitvora = new Bitvora({
+  apiKey,
+  "mainnet" // ["mainnet", "testnet", "signet"]
+});
+
+async function getWithdrawal(): Promise<Withdrawal> {
+  return bitvora.getWithdrawal("UUID-HERE");
 }
 ```

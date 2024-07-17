@@ -214,3 +214,20 @@ export interface LightningPayment {
     payment_hash: string;
   };
 }
+
+export interface GetTransactionsResponse {
+  status: number;
+  message: string;
+  data: Transaction[];
+}
+
+export interface Transaction {
+  id: string;
+  company_id: string;
+  amount_sats: number;
+  recipient: string;
+  rail_type: string;
+  type: string;
+  status: string;
+  created_at: string;
+}
