@@ -4,9 +4,11 @@ import {
   BitcoinWithdrawalResponse,
   CreateLightningAddressResponse,
   CreateLightningInvoiceResponse,
+  GetTransactionsResponse,
   Metadata,
 } from "./types";
 import { Withdrawal } from "./withdrawal";
+import { LightningInvoice } from "./lightning_invoice";
 
 export class BitvoraClient {
   constructor(private apiKey: string, private network: string) {
@@ -34,7 +36,7 @@ export class BitvoraClient {
   public getHost(): string {
     switch (this.network) {
       case "mainnet":
-        return "https://api.bitvora.com";
+        return "http://localhost:4000";
       case "testnet":
         return "https://api.testnet.bitvora.com";
       case "signet":
@@ -161,7 +163,7 @@ export class BitvoraClient {
     memo: string,
     expirySeconds: number,
     metadata: Metadata | null
-  ): Promise<CreateLightningInvoiceResponse> {
+  ): Promise<LightningInvoice> {
     const response = await fetch(
       `${this.getHost()}/v1/bitcoin/deposit/lightning-invoice`,
       {
@@ -179,6 +181,23 @@ export class BitvoraClient {
       }
     );
 
+    return new LightningInvoice(this, await response.json());
+  }
+
+  public async getLightningInvoice(
+    invoiceId: string
+  ): Promise<CreateLightningInvoiceResponse> {
+    const response = await fetch(
+      `${this.getHost()}/v1/bitcoin/deposit/lightning-invoice/id/${invoiceId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      }
+    );
+
     return await response.json();
   }
 
@@ -193,5 +212,17 @@ export class BitvoraClient {
 
     const data = await response.json();
     return data.data.balance;
+  }
+
+  public async getTransactions(): Promise<GetTransactionsResponse> {
+    const response = await fetch(`${this.getHost()}/v1/transactions`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+    });
+
+    return await response.json();
   }
 }
