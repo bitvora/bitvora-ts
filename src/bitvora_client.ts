@@ -36,7 +36,7 @@ export class BitvoraClient {
   public getHost(): string {
     switch (this.network) {
       case "mainnet":
-        return "http://localhost:4000";
+        return "https://api.bitvora.com";
       case "testnet":
         return "https://api.testnet.bitvora.com";
       case "signet":
