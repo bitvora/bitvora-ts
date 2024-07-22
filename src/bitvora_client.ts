@@ -77,6 +77,12 @@ export class BitvoraClient {
     );
 
     const data = await response.json();
+
+    // if response status code is not 200 or 201, throw error
+    if (response.status !== 200 && response.status !== 201) {
+      throw new Error(data.message);
+    }
+
     return new Withdrawal(this, data);
   }
 

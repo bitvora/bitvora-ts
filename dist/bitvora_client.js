@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BitvoraClient = void 0;
-const node_crypto_1 = require("node:crypto");
+const crypto_1 = require("crypto");
 const withdrawal_1 = require("./withdrawal");
 const lightning_invoice_1 = require("./lightning_invoice");
 class BitvoraClient {
@@ -35,7 +35,7 @@ class BitvoraClient {
     getHost() {
         switch (this.network) {
             case "mainnet":
-                return "http://localhost:4000";
+                return "https://api.bitvora.com";
             case "testnet":
                 return "https://api.testnet.bitvora.com";
             case "signet":
@@ -45,7 +45,7 @@ class BitvoraClient {
         }
     }
     validateWebhookSignature(payload, signature, secret) {
-        const hmac = (0, node_crypto_1.createHmac)("sha256", secret);
+        const hmac = (0, crypto_1.createHmac)("sha256", secret);
         hmac.update(payload);
         const hash = hmac.digest("hex");
         return hash === signature;
