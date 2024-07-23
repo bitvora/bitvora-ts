@@ -15,7 +15,7 @@ npm install bitvora
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
 async function sendBitcoin(): Promise<Withdrawal> {
   const withdrawal = await bitvora.withdraw(
@@ -34,7 +34,7 @@ async function sendBitcoin(): Promise<Withdrawal> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
 async function createLightningAddress(): Promise<CreateLightningAddressResponse> {
   let metadata = {
@@ -51,7 +51,7 @@ async function createLightningAddress(): Promise<CreateLightningAddressResponse>
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
 async function createLightningInvoice(): Promise<LightningInvoice> {
   let metadata = {
@@ -77,7 +77,7 @@ async function createLightningInvoice(): Promise<LightningInvoice> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
 async function getBalance(): Promise<number> {
   return bitvora.getBalance();
@@ -89,7 +89,7 @@ async function getBalance(): Promise<number> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
 async function getTransactions(): Promise<GetTransactionsResponse> {
   return bitvora.getTransactions();
@@ -101,7 +101,7 @@ async function getTransactions(): Promise<GetTransactionsResponse> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
 async function getDeposit(): Promise<BitcoinDepositResponse> {
   return bitvora.getDeposit("UUID-HERE");
@@ -113,7 +113,7 @@ async function getDeposit(): Promise<BitcoinDepositResponse> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = new BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
 
 async function getWithdrawal(): Promise<BitcoinWithdrawalResponse> {
   return bitvora.getWithdrawal("UUID-HERE");

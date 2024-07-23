@@ -1,5 +1,8 @@
-import { BitvoraClient } from "./bitvora_client";
-import { BitcoinWithdrawalResponse, LightningPayment } from "./types";
+import {
+  BitcoinWithdrawalResponse,
+  LightningPayment,
+  BitvoraClient,
+} from "./types";
 
 export class Withdrawal {
   public id: string;
