@@ -1,6 +1,6 @@
-import { BitvoraClient } from "./bitvora_client";
 import {
   BitcoinWithdrawalResponse,
+  BitvoraClient,
   CreateLightningInvoiceResponse,
   LightningPayment,
 } from "./types";

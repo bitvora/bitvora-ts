@@ -1,3 +1,7 @@
+import { BitvoraClient } from "./bitvora_client";
+
+export type BitvoraClient = ReturnType<typeof BitvoraClient>;
+
 export interface Metadata {
   [key: string]: string;
 }
