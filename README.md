@@ -15,12 +15,13 @@ npm install bitvora
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, BitcoinNetwork.MAINNET); // ["mainnet", "testnet", "signet"]
 
 async function sendBitcoin(): Promise<Withdrawal> {
   const withdrawal = await bitvora.withdraw(
     "utxo1@getalby.com", // accepts on-chain, lightning invoice (payment request), lightning address, lnurl
-    25 // amount, in sats
+    10.0, // amount in your desired currency
+    Currency.USD // currency code
   );
 
   await withdrawal.isSettled(); // wait until the payment succeeds or fails, optional
@@ -34,7 +35,7 @@ async function sendBitcoin(): Promise<Withdrawal> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, BitcoinNetwork.MAINNET); // ["mainnet", "testnet", "signet"]
 
 async function createLightningAddress(): Promise<CreateLightningAddressResponse> {
   let metadata = {
@@ -51,7 +52,7 @@ async function createLightningAddress(): Promise<CreateLightningAddressResponse>
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, BitcoinNetwork.MAINNET); // ["mainnet", "testnet", "signet"]
 
 async function createLightningInvoice(): Promise<LightningInvoice> {
   let metadata = {
@@ -61,6 +62,7 @@ async function createLightningInvoice(): Promise<LightningInvoice> {
 
   const invoice = await bitvora.createLightningInvoice(
     50,
+    Currency.SATS,
     "this is from the sdk",
     3600,
     metadata
@@ -77,7 +79,7 @@ async function createLightningInvoice(): Promise<LightningInvoice> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, BitcoinNetwork.MAINNET); // ["mainnet", "testnet", "signet"]
 
 async function getBalance(): Promise<number> {
   return bitvora.getBalance();
@@ -89,7 +91,7 @@ async function getBalance(): Promise<number> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, BitcoinNetwork.MAINNET); // ["mainnet", "testnet", "signet"]
 
 async function getTransactions(): Promise<GetTransactionsResponse> {
   return bitvora.getTransactions();
@@ -101,7 +103,7 @@ async function getTransactions(): Promise<GetTransactionsResponse> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, BitcoinNetwork.MAINNET); // ["mainnet", "testnet", "signet"]
 
 async function getDeposit(): Promise<BitcoinDepositResponse> {
   return bitvora.getDeposit("UUID-HERE");
@@ -113,7 +115,7 @@ async function getDeposit(): Promise<BitcoinDepositResponse> {
 ```typescript
 import { BitvoraClient } from "bitvora";
 
-const bitvora = BitvoraClient(API_KEY, "mainnet"); // ["mainnet", "testnet", "signet"]
+const bitvora = BitvoraClient(API_KEY, BitcoinNetwork.MAINNET); // ["mainnet", "testnet", "signet"]
 
 async function getWithdrawal(): Promise<BitcoinWithdrawalResponse> {
   return bitvora.getWithdrawal("UUID-HERE");

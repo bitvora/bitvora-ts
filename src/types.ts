@@ -16,6 +16,27 @@ export interface DepositOnChainPayload {
   metadata: Metadata;
 }
 
+export enum BitcoinNetwork {
+  MAINNET = "mainnet",
+  TESTNET4 = "testnet4",
+  SIGNET = "signet",
+}
+
+export enum Currency {
+  AUD = "aud",
+  CAD = "cad",
+  CHF = "chf",
+  CNY = "cny",
+  EUR = "eur",
+  GBP = "gbp",
+  HKD = "hkd",
+  JPY = "jpy",
+  NZD = "nzd",
+  USD = "usd",
+  BTC = "btc",
+  Sats = "sats",
+}
+
 export interface WithdrawalOnChainPayload {
   withdrawal_id: string;
   chain_txid: string;
@@ -125,6 +146,7 @@ export interface BitcoinWithdrawal {
   recipient: string;
   network_type: string;
   rail_type: string;
+  fee_sats: number;
   status: string;
   lightning_payment: LightningPayment | null;
   metadata: string | null;
