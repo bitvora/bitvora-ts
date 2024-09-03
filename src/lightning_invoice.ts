@@ -1,9 +1,4 @@
-import {
-  BitcoinWithdrawalResponse,
-  BitvoraClient,
-  CreateLightningInvoiceResponse,
-  LightningPayment,
-} from "./types";
+import { BitvoraClient, CreateLightningInvoiceResponse } from "./types";
 
 export class LightningInvoice {
   public id: string;

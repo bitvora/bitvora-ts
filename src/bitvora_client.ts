@@ -1,16 +1,18 @@
 import { createHmac } from "crypto";
 import {
   BitcoinDepositResponse,
+  BitcoinNetwork,
   BitcoinWithdrawalResponse,
   CreateLightningAddressResponse,
   CreateLightningInvoiceResponse,
+  Currency,
   GetTransactionsResponse,
   Metadata,
 } from "./types";
 import { Withdrawal } from "./withdrawal";
 import { LightningInvoice } from "./lightning_invoice";
 
-export function BitvoraClient(apiKey: string, network: string) {
+export function BitvoraClient(apiKey: string, network: BitcoinNetwork) {
   return {
     getApiKey(): string {
       return apiKey;
@@ -54,7 +56,8 @@ export function BitvoraClient(apiKey: string, network: string) {
 
     async withdraw(
       destination: string,
-      amount_sats: number
+      amount: number,
+      currency: Currency
     ): Promise<Withdrawal> {
       const response = await fetch(
         `${this.getHost()}/v1/bitcoin/withdraw/confirm`,
@@ -66,7 +69,8 @@ export function BitvoraClient(apiKey: string, network: string) {
           },
           body: JSON.stringify({
             destination: destination,
-            amount_sats: amount_sats,
+            amount: amount,
+            currency: currency,
           }),
         }
       );
@@ -160,7 +164,8 @@ export function BitvoraClient(apiKey: string, network: string) {
     },
 
     async createLightningInvoice(
-      amountSats: number,
+      amount: number,
+      currency: Currency,
       memo: string,
       expirySeconds: number,
       metadata: Metadata | null
@@ -174,7 +179,8 @@ export function BitvoraClient(apiKey: string, network: string) {
             Authorization: `Bearer ${this.getApiKey()}`,
           },
           body: JSON.stringify({
-            amount_sats: amountSats,
+            amount: amount,
+            currency: currency,
             description: memo,
             expiry_seconds: expirySeconds,
             metadata: metadata,

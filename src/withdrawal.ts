@@ -12,6 +12,7 @@ export class Withdrawal {
   public recipient: string;
   public network_type: string;
   public rail_type: string;
+  public fee_sats: number;
   public status: string;
   public lightning_payment: LightningPayment | null;
   public chain_tx_id: string | null;
@@ -28,6 +29,7 @@ export class Withdrawal {
     this.recipient = withdrawalData.recipient;
     this.network_type = withdrawalData.network_type;
     this.rail_type = withdrawalData.rail_type;
+    this.fee_sats = withdrawalData.fee_sats;
     this.status = withdrawalData.status;
     this.lightning_payment = withdrawalData.lightning_payment;
     this.chain_tx_id = withdrawalData.chain_tx_id;
